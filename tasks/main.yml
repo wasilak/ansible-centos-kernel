@@ -1,0 +1,39 @@
+---
+- name: "Adding ELRepo"
+  yum_repository:
+    name: elrepo
+    description: "ELRepo.org Community Enterprise Linux Repository - el7"
+    baseurl: http://elrepo.org/linux/elrepo/el7/$basearch/
+    mirrorlist: http://mirrors.elrepo.org/mirrors-elrepo.el7
+    enabled: yes
+    gpgcheck: yes
+    gpgkey: https://www.elrepo.org/RPM-GPG-KEY-elrepo.org
+
+- name: "Adding ELRepo Kernel"
+  yum_repository:
+    name: elrepo-kernel
+    description: "ELRepo.org Community Enterprise Linux Kernel Repository - el7"
+    baseurl: http://elrepo.org/linux/kernel/el7/$basearch/
+    enabled: yes
+    gpgcheck: yes
+    gpgkey: https://www.elrepo.org/RPM-GPG-KEY-elrepo.org
+
+- name: "Installing newest kernel"
+  yum:
+    name: kernel-ml
+    state: latest
+    update_cache: yes
+
+- name: "Setting default kernel"
+  lineinfile:
+    path: "/etc/default/grub"
+    regexp: '^GRUB_DEFAULT='
+    line: "GRUB_DEFAULT=0"
+  register: grub_changed
+
+- debug: var=grub_changed["changed"]
+
+- name: "Re-creating grub config"
+  shell: "grub2-mkconfig -o /boot/grub2/grub.cfg"
+  when: grub_changed["changed"]
+  
