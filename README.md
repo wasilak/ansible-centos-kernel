@@ -1,4 +1,4 @@
-Centos Base
+Centos 4.x kernel
 =========
 
 - ELRepo
