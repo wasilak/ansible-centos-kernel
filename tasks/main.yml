@@ -20,9 +20,12 @@
 
 - name: "Installing newest kernel"
   yum:
-    name: kernel-ml
+    name: "{{ item }}"
     state: latest
     update_cache: yes
+  with_items:
+    - kernel-ml
+    - kernel-ml-devel
 
 - name: "Setting default kernel"
   lineinfile:
